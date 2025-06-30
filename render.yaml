@@ -1,0 +1,26 @@
+databases:
+  - name: tesla-ml-db
+    plan: free
+    databaseName: tesla_ml
+    user: tesla_user
+
+services:
+  - type: web
+    plan: free
+    name: tesla-ml-predictor
+    runtime: python
+    buildCommand: './build.sh'
+    startCommand: 'gunicorn tesla_prediction_project.wsgi:application'
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tesla-ml-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "tesla-ml-predictor.onrender.com"
+      - key: WEB_CONCURRENCY
+        value: "4"

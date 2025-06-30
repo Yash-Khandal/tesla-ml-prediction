@@ -12,25 +12,25 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+# Production/Development settings
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-fh4+*c9&nmbn7+0h*m*2kdh6^vy)fd&55rs42854md#2(u09x5'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fh4+*c9&nmbn7+0h*m*2kdh6^vy)fd&55rs42854md#2(u09x5')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.pythonanywhere.com']
-
+# ALLOWED_HOSTS configuration
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+if not DEBUG:
+    allowed_hosts_env = os.environ.get("ALLOWED_HOSTS", "")
+    if allowed_hosts_env:
+        ALLOWED_HOSTS.extend([host.strip() for host in allowed_hosts_env.split(",") if host.strip()])
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # For static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -73,21 +74,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tesla_prediction_project.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Database configuration
+# Use PostgreSQL in production (Render), SQLite in development
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
-}
-
+else:
+    # Development database (SQLite)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -103,52 +105,47 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Kolkata'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = '/static/'
 
+# Static files configuration for both development and production
 STATICFILES_DIRS = [
     BASE_DIR / 'ml_predictor' / 'static',
 ]
 
+# Production static files
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise configuration for production
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Tesla ML Model Configuration - Updated with correct file names
+# Tesla ML Model Configuration
 ML_MODELS_PATH = BASE_DIR / 'ml_predictor' / 'models'
 
-# Tesla ML Model Settings - Matching your actual .pkl files
+# Tesla ML Model Settings
 TESLA_MODEL_CONFIG = {
-    'MODEL_FILE': 'tesla_price_prediction_model.pkl',  # Matches your file
-    'MODEL_ENCODER': 'model_encoder.pkl',              # Matches your file  
-    'COUNTRY_ENCODER': 'country_encoder.pkl',          # Matches your file
-    'PURCHASE_ENCODER': 'purchase_encoder.pkl',        # Matches your file
-    'FEATURE_COLUMNS': 'tesla_feature_columns.pkl',    # Matches your file
-    'MODEL_INFO': 'tesla_model_info.pkl',              # Matches your file
-    'CONFIDENCE_INTERVAL': '±$2,918.91',
-    'MODEL_ACCURACY': '95.4%'
+    'MODEL_FILE': 'tesla_price_prediction_model.pkl',
+    'MODEL_ENCODER': 'model_encoder.pkl',
+    'COUNTRY_ENCODER': 'country_encoder.pkl',
+    'PURCHASE_ENCODER': 'purchase_encoder.pkl',
+    'FEATURE_COLUMNS': 'tesla_feature_columns.pkl',
+    'MODEL_INFO': 'tesla_model_info.pkl',
+    'CONFIDENCE_INTERVAL': '±$5,000',
+    'MODEL_ACCURACY': '92%'
 }
 
 # Logging configuration
@@ -185,3 +182,13 @@ X_FRAME_OPTIONS = 'DENY'
 # Session configuration
 SESSION_COOKIE_AGE = 1800
 SESSION_SAVE_EVERY_REQUEST = True
+
+# Production security settings (only in production)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'

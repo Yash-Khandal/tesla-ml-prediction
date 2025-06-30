@@ -1,0 +1,37 @@
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+*.sqlite3
+media/
+staticfiles/
+
+# Environment variables
+.env
+*.env
+
+# Virtual environment
+venv/
+env/
+tesla_env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+*.log
+.pytest_cache/
+.coverage
+
+# Machine Learning models (optional - you might want to include them)
+# *.pkl
+
+# Jupyter Notebook
+.ipynb_checkpoints/

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tesla Sales Prediction | ML Dashboard{% endblock %}</title>
+    
+    <!-- Favicon - PNG Format -->
+    {% load static %}
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon.png' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}">
+    
+    <!-- Meta tags for better SEO -->
+    <meta name="description" content="Tesla Sales Prediction - Advanced ML model for automotive price forecasting">
+    <meta name="keywords" content="Tesla, Machine Learning, Price Prediction, Django, AI">
+    <meta name="author" content="Yash">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-tesla">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-car-side me-2"></i>
+                Tesla AI Predictor
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-brain me-1"></i>ML Model
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                            <i class="fas fa-info-circle me-1"></i>About
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section bg-gradient-tesla text-white">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Tesla Price Prediction
+                        <span class="text-warning">AI Model</span>
+                    </h1>
+                    <p class="lead mb-4">
+                        Advanced Machine Learning model trained on 85,000+ Tesla sales records. 
+                        Predict Tesla vehicle prices with 92% accuracy using Linear Regression algorithm.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <div class="stat-box">
+                            <div class="stat-number">92%</div>
+                            <div class="stat-label">Accuracy</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">85K+</div>
+                            <div class="stat-label">Training Data</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">±$5,000</div>
+                            <div class="stat-label">Precision</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="tesla-icon-container">
+                        <i class="fas fa-car-side tesla-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- About Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-tesla text-white">
+                    <h5 class="modal-title fw-bold" id="aboutModalLabel">
+                        <i class="fas fa-info-circle me-2"></i>
+                        About Tesla AI Predictor
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Purpose Section -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-primary mb-3">
+                            <i class="fas fa-bullseye me-2"></i>Purpose & Mission
+                        </h6>
+                        <p class="text-muted">
+                            Tesla AI Predictor is a professional machine learning application designed to predict Tesla vehicle prices 
+                            with high accuracy. This project demonstrates enterprise-level ML deployment capabilities and serves as 
+                            a portfolio showcase for advanced data science and web development skills.
+                        </p>
+                    </div>
+
+                    <!-- Usefulness Section -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-success mb-3">
+                            <i class="fas fa-chart-line me-2"></i>What Makes It Useful
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Real-time Tesla price predictions</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>92% prediction accuracy</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Enterprise-scale data processing</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Multi-market analysis (US, Germany, Australia)</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Professional web interface</li>
+                                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Production-ready deployment</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Developer Section -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-warning mb-3">
+                            <i class="fas fa-user-tie me-2"></i>Developer Information
+                        </h6>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-gradient-tesla rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                <i class="fas fa-code text-white fa-2x"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Yash</h6>
+                                <p class="text-muted mb-1">Full-Stack ML Engineer</p>
+                                <small class="text-muted">Specialized in Machine Learning, Django, and Data Science</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technology Stack -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-info mb-3">
+                            <i class="fas fa-cogs me-2"></i>Technology Stack
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="tech-category mb-3">
+                                    <small class="fw-bold text-uppercase text-muted">Machine Learning</small>
+                                    <div class="mt-1">
+                                        <span class="badge bg-primary me-2">Python</span>
+                                        <span class="badge bg-primary me-2">scikit-learn</span>
+                                        <span class="badge bg-primary me-2">pandas</span>
+                                        <span class="badge bg-primary">Linear Regression</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="tech-category mb-3">
+                                    <small class="fw-bold text-uppercase text-muted">Web Development</small>
+                                    <div class="mt-1">
+                                        <span class="badge bg-success me-2">Django</span>
+                                        <span class="badge bg-success me-2">Bootstrap 5</span>
+                                        <span class="badge bg-success me-2">HTML5</span>
+                                        <span class="badge bg-success">CSS3</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="tech-category mb-3">
+                                    <small class="fw-bold text-uppercase text-muted">Data Processing</small>
+                                    <div class="mt-1">
+                                        <span class="badge bg-warning me-2">NumPy</span>
+                                        <span class="badge bg-warning me-2">StandardScaler</span>
+                                        <span class="badge bg-warning">LabelEncoder</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="tech-category mb-3">
+                                    <small class="fw-bold text-uppercase text-muted">Deployment</small>
+                                    <div class="mt-1">
+                                        <span class="badge bg-dark me-2">Pickle</span>
+                                        <span class="badge bg-dark me-2">Git</span>
+                                        <span class="badge bg-dark">VS Code</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project Stats -->
+                    <div class="bg-light rounded p-3">
+                        <div class="row text-center">
+                            <div class="col-3">
+                                <div class="fw-bold text-primary">85,592</div>
+                                <small class="text-muted">Training Records</small>
+                            </div>
+                            <div class="col-3">
+                                <div class="fw-bold text-success">92%</div>
+                                <small class="text-muted">Accuracy</small>
+                            </div>
+                            <div class="col-3">
+                                <div class="fw-bold text-warning">±$5,000</div>
+                                <small class="text-muted">Precision</small>
+                            </div>
+                            <div class="col-3">
+                                <div class="fw-bold text-info">3</div>
+                                <small class="text-muted">Markets</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Close
+                    </button>
+                    <button type="button" class="btn btn-gradient-tesla text-white">
+                        <i class="fas fa-rocket me-2"></i>Try Prediction
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-car-side me-2"></i>Tesla AI Predictor</h5>
+                    <p class="mb-0">Professional ML model for Tesla sales prediction</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <p class="mb-0">
+                        <i class="fas fa-brain me-2"></i>
+                        Powered by Machine Learning & Django
+                    </p>
+                    <small class="text-muted">Built for professional demonstration</small>
+                </div>
+                <div class="col-md-4 text-end">
+                    <p class="mb-1">
+                        <i class="fas fa-code me-2"></i>
+                        Developed by <strong>Yash</strong>
+                    </p>
+                    <small class="text-muted">
+                        © 2025 Tesla AI Predictor. All rights reserved.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <!-- Prediction Form -->
+    <div class="col-lg-6">
+        <div class="card shadow-lg border-0 prediction-card">
+            <div class="card-header bg-gradient-tesla text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-cogs me-2"></i>
+                    Tesla Price Prediction
+                </h4>
+                <small>Enter vehicle details to get AI-powered price prediction</small>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" id="predictionForm">
+                    {% csrf_token %}
+                    
+                    <!-- Tesla Model Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-car me-2 text-primary"></i>Tesla Model
+                        </label>
+                        {{ form.tesla_model }}
+                    </div>
+
+                    <!-- Country Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-globe me-2 text-success"></i>Country
+                        </label>
+                        {{ form.country }}
+                    </div>
+
+                    <!-- Purchase Type -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-credit-card me-2 text-warning"></i>Purchase Type
+                        </label>
+                        {{ form.purchase_type }}
+                    </div>
+
+                    <!-- Year & Quarter Row -->
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-calendar me-2 text-info"></i>Year
+                            </label>
+                            {{ form.year }}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-calendar-alt me-2 text-info"></i>Quarter
+                            </label>
+                            {{ form.quarter }}
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-gradient-tesla btn-lg w-100">
+                        <i class="fas fa-brain me-2"></i>
+                        Predict Tesla Price
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Model Information Card -->
+        <div class="card mt-4 shadow border-0">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-info-circle text-primary me-2"></i>
+                    Model Information
+                </h5>
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="info-stat">
+                            <i class="fas fa-database text-primary"></i>
+                            <div class="fw-bold">85,592</div>
+                            <small class="text-muted">Training Records</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="info-stat">
+                            <i class="fas fa-bullseye text-success"></i>
+                            <div class="fw-bold">95.4%</div>
+                            <small class="text-muted">Accuracy</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="info-stat">
+                            <i class="fas fa-chart-line text-warning"></i>
+                            <div class="fw-bold">Random Forest</div>
+                            <small class="text-muted">Algorithm</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="col-lg-6">
+        {% if prediction_result %}
+            {% if prediction_result.success %}
+                <!-- Successful Prediction -->
+                <div class="card shadow-lg border-0 result-card">
+                    <div class="card-header bg-gradient-success text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Prediction Result
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Price Display -->
+                        <div class="price-display text-center mb-4">
+                            <div class="price-label">Predicted Tesla Price</div>
+                            <div class="price-amount">
+                                ${{ prediction_result.predicted_price|floatformat:2 }}
+                            </div>
+                            <div class="price-confidence">
+                                {{ prediction_result.confidence_range }}
+                            </div>
+                        </div>
+
+                        <!-- Input Summary -->
+                        <div class="prediction-details">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-list me-2"></i>Input Details
+                            </h6>
+                            <div class="detail-row">
+                                <span class="detail-label">Tesla Model:</span>
+                                <span class="detail-value">{{ prediction_result.inputs.model }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Country:</span>
+                                <span class="detail-value">{{ prediction_result.inputs.country }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Purchase Type:</span>
+                                <span class="detail-value">{{ prediction_result.inputs.purchase_type }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Period:</span>
+                                <span class="detail-value">Q{{ prediction_result.inputs.quarter }} {{ prediction_result.inputs.year }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Model Confidence -->
+                        <div class="confidence-meter mt-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-semibold">Model Confidence</span>
+                                <span class="text-success fw-bold">{{ prediction_result.model_accuracy }}</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar bg-success" style="width: 95.4%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Error in Prediction -->
+                <div class="card shadow-lg border-0 border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Prediction Error
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-danger mb-0">{{ prediction_result.error }}</p>
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <!-- Welcome Card -->
+            <div class="card shadow border-0 welcome-card">
+                <div class="card-body text-center p-5">
+                    <div class="welcome-icon mb-4">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4 class="mb-3">Advanced Tesla Price Prediction</h4>
+                    <p class="text-muted mb-4">
+                        Fill out the form to get an AI-powered prediction of Tesla vehicle prices 
+                        based on our professionally trained machine learning model.
+                    </p>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            95.4% Prediction Accuracy
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Trained on 85K+ Records
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Real-time Results
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
